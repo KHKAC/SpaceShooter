@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlayerCtrl : MonoBehaviour
 {
     // component cash
-    Transform tr;
+    [SerializeField] Transform tr;
+    [SerializeField] float moveSpeed = 10.0f;
     void Start()
     {
         // GetComponent
@@ -24,8 +25,7 @@ public class PlayerCtrl : MonoBehaviour
         Debug.Log($"v = {v}");
         // Transform.Position과 normalized Vector의 표현 방법 차이
         // transform.position += new Vector3(0, 0, 1); // Transform.Position
-        tr.position += Vector3.forward * 1; // normalized Vector
+        // tr.position += Vector3.forward * 1; // normalized Vector
+        tr.Translate(Vector3.forward * Time.deltaTime * v * moveSpeed, Space.Self);
     }
-    
-
 }
