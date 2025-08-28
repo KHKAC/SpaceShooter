@@ -7,6 +7,7 @@ public class PlayerCtrl : MonoBehaviour
     // component cash
     [SerializeField] Transform tr;
     [SerializeField] float moveSpeed = 10.0f;
+    [SerializeField] float turnSpeed = 80.0f;
     void Start()
     {
         // GetComponent
@@ -21,11 +22,12 @@ public class PlayerCtrl : MonoBehaviour
     {
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
-        Debug.Log($"h = {h}");
-        Debug.Log($"v = {v}");
+        float r = Input.GetAxis("Mouse X");
+        Vector3 moveDir = (Vector3.forward * v) + (Vector3.right * h);
         // Transform.Position과 normalized Vector의 표현 방법 차이
         // transform.position += new Vector3(0, 0, 1); // Transform.Position
         // tr.position += Vector3.forward * 1; // normalized Vector
-        tr.Translate(Vector3.forward * Time.deltaTime * v * moveSpeed, Space.Self);
+        tr.Translate(moveDir.normalized * moveSpeed * Time.deltaTime, Space.Self);
+        tr.Rotate(Vector3.up * turnSpeed * Time.deltaTime * r);
     }
 }
