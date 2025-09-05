@@ -13,12 +13,4 @@ public class BulletCtrl : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.AddForce(transform.forward * force);
     }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Wall"))
-        {
-            Destroy(gameObject);
-        }
-    }
 }
