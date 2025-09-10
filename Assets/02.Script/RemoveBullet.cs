@@ -12,9 +12,13 @@ public class RemoveBullet : MonoBehaviour
         // if (coll.gameObject.tag.Equals("BULLET"))
         if (coll.collider.CompareTag("BULLET"))
         {
+            // 충돌 지점
             ContactPoint cp = coll.GetContact(0);
+            // 법선 벡터를 쿼터니언 타입으로 변경
             Quaternion rot = Quaternion.LookRotation(-cp.normal);
+            // 스파크 생성
             GameObject spark = Instantiate(sparkEffect, cp.point, rot);
+            
             Destroy(spark, 0.5f);
             Destroy(coll.gameObject);
         }
