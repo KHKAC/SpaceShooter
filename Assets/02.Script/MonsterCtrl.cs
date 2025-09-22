@@ -11,6 +11,11 @@ public class MonsterCtrl : MonoBehaviour
     public float traceDist = 10.0f;
     public float attackDist = 2.0f;
     public bool isDie = false;
+
+    //Animator parameter Hash 값 추출
+    readonly int hashTrace = Animator.StringToHash("IsTrace");
+    readonly int hashAttack = Animator.StringToHash("IsAttack");
+
     Transform monsterTr;
     Transform playerTr;
     NavMeshAgent agent;
@@ -60,14 +65,16 @@ public class MonsterCtrl : MonoBehaviour
             {
                 case MonState.IDLE:
                     agent.isStopped = true;
-                    anim.SetBool("IsTrace", false);
+                    anim.SetBool(hashTrace, false);
                     break;
                 case MonState.TRACE:
                     agent.SetDestination(playerTr.position);
                     agent.isStopped = false;
-                    anim.SetBool("IsTrace", true);
+                    anim.SetBool(hashTrace, true);
+                    anim.SetBool(hashAttack, false);
                     break;
                 case MonState.ATTACK:
+                    anim.SetBool(hashAttack, true);
                     break;
                 case MonState.DIE:
                     break;
