@@ -15,10 +15,12 @@ public class MonsterCtrl : MonoBehaviour
     //Animator parameter Hash 값 추출
     readonly int hashTrace = Animator.StringToHash("IsTrace");
     readonly int hashAttack = Animator.StringToHash("IsAttack");
+    readonly int hashHit = Animator.StringToHash("Hit");
 
     Transform monsterTr;
     Transform playerTr;
     NavMeshAgent agent;
+    GameObject bloodEffect;
     Animator anim;
 
     void Start()
@@ -80,6 +82,15 @@ public class MonsterCtrl : MonoBehaviour
                     break;
             }
             yield return new WaitForSeconds(TIME_WAIT);
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.CompareTag("BULLET"))
+        {
+            Destroy(collision.gameObject);
+            anim.SetTrigger(hashHit);
         }
     }
 
