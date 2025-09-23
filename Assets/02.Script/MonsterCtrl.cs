@@ -32,6 +32,7 @@ public class MonsterCtrl : MonoBehaviour
         // agent.destination = playerTr.position;
         // agent.SetDestination(playerTr.position);
 
+        bloodEffect = Resources.Load<GameObject>("BloodSprayEffect");
         // 몬스터의 상태를 체크하는 코루틴
         StartCoroutine(CheckMonState());
         // 상태에 따른 몬스터의 행동을 수행하는 코루틴
@@ -91,7 +92,18 @@ public class MonsterCtrl : MonoBehaviour
         {
             Destroy(collision.gameObject);
             anim.SetTrigger(hashHit);
+
+            Vector3 pos = collision.GetContact(0).point;
+            Quaternion rot = Quaternion.LookRotation(-collision.GetContact(0).normal);
+
+            ShowBloodEffect(pos, rot);
         }
+    }
+
+    void ShowBloodEffect(Vector3 pos, Quaternion rot)
+    {
+        GameObject blood = Instantiate<GameObject>(bloodEffect, pos, rot, monsterTr);
+        Destroy(blood, 1.0f);
     }
 
     void OnDrawGizmos()

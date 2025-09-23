@@ -13,6 +13,7 @@ public class BarrelCtrl : MonoBehaviour
     const float OVER_FORCE = 1200.0f;
 
     #region private
+    [SerializeField] Transform barrelEffectTr;
     [SerializeField] GameObject explosionEffect;
     [SerializeField] Texture[] textures;
     [SerializeField] float radius = 10.0f;
@@ -52,7 +53,7 @@ public class BarrelCtrl : MonoBehaviour
     void ExplosionBarrel()
     {
         //폭파 효과 파티클 생성
-        GameObject explosion = Instantiate(explosionEffect, tr.position, Quaternion.identity);
+        GameObject explosion = Instantiate(explosionEffect, tr.position, Quaternion.identity, barrelEffectTr);
         // 파티클 생성 5초후 파티클  제거
         Destroy(explosion, DESTROY_EXPLOSION);
 
