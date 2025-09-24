@@ -6,14 +6,19 @@ public class PlayerCtrl : MonoBehaviour
 {
     const float TIME_INTER = 0.10f;
     const float INPUT_VALUE = 0.05f;
+    const float INIT_HP = 100.0f;
+    const float PUNCH_POWER = 10.0f;
     // component cash
     Transform tr;
     Animation anim;
     [SerializeField] float moveSpeed = 10.0f;
     [SerializeField] float turnSpeed = 500.0f;
 
+    public float currHP;
+
     IEnumerator Start()
     {
+        currHP = INIT_HP;
         // GetComponent
         // tr = this.gameObject.GetComponent<Transform>();
         // GetComponent("Transform") as Transform;
@@ -63,6 +68,29 @@ public class PlayerCtrl : MonoBehaviour
         else
         {
             anim.CrossFade("Idle", TIME_INTER);
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (currHP > 0.0f && other.CompareTag("PUNCH"))
+        {
+            currHP -= PUNCH_POWER;
+            Debug.Log($"Player HP = {currHP / INIT_HP * 100}%");
+            if (currHP <= 0.0f)
+            {
+                PlayerDie();
+            }
+        }
+    }
+
+    void PlayerDie()
+    {
+        Debug.Log("Player Die");
+        GameObject[] monsters = GameObject.FindGameObjectsWithTag("MONSTER");
+        foreach (GameObject monster in monsters)
+        {
+            monster.SendMessage("OnPlayerDie", SendMessageOptions.DontRequireReceiver);
         }
     }
 }

@@ -16,6 +16,8 @@ public class MonsterCtrl : MonoBehaviour
     readonly int hashTrace = Animator.StringToHash("IsTrace");
     readonly int hashAttack = Animator.StringToHash("IsAttack");
     readonly int hashHit = Animator.StringToHash("Hit");
+    readonly int hashPlayerDie = Animator.StringToHash("PlayerDie");
+    readonly int hashAnimSpeed = Animator.StringToHash("Speed");
 
     Transform monsterTr;
     Transform playerTr;
@@ -119,5 +121,18 @@ public class MonsterCtrl : MonoBehaviour
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, attackDist);
         }
+    }
+    // void OnTriggerEnter(Collider other)
+    // {
+    //     Debug.Log(other.gameObject.name);
+    // }
+
+    // Player에서 string 형태로 부르고 있음
+    void OnPlayerDie()
+    {
+        StopAllCoroutines();
+        agent.isStopped = true;
+        anim.SetFloat(hashAnimSpeed, Random.Range(0.8f, 1.2f));
+        anim.SetTrigger(hashPlayerDie);
     }
 }
