@@ -6,11 +6,16 @@ using UnityEngine.AI;
 public class MonsterCtrl : MonoBehaviour
 {
     const float TIME_WAIT = 0.3f;
+    const int MAX_HP = 100;
+    const int DAMAGE = 10;
+    
     public enum MonState { IDLE, TRACE, ATTACK, DIE }
     public MonState monState = MonState.IDLE;
     public float traceDist = 10.0f;
     public float attackDist = 2.0f;
     public bool isDie = false;
+    [SerializeField] CapsuleCollider bodyCollider;
+    [SerializeField] SphereCollider[] handColliders;
 
     //Animator parameter Hash 값 추출
     readonly int hashTrace = Animator.StringToHash("IsTrace");
@@ -18,12 +23,24 @@ public class MonsterCtrl : MonoBehaviour
     readonly int hashHit = Animator.StringToHash("Hit");
     readonly int hashPlayerDie = Animator.StringToHash("PlayerDie");
     readonly int hashAnimSpeed = Animator.StringToHash("Speed");
+    readonly int hashDie = Animator.StringToHash("Die");
 
     Transform monsterTr;
     Transform playerTr;
     NavMeshAgent agent;
     GameObject bloodEffect;
     Animator anim;
+    int hp = MAX_HP;
+
+    void OnEnable() // 스크립트가 활성화 될 때
+    {
+        PlayerCtrl.OnPlayerDie += OnPlayerDie;
+    }
+
+    void OnDisable() // 스크립트가 비활성화 될 때
+    {
+        PlayerCtrl.OnPlayerDie -= OnPlayerDie;
+    }
 
     void Start()
     {
@@ -46,6 +63,7 @@ public class MonsterCtrl : MonoBehaviour
         while (!isDie)
         {
             yield return new WaitForSeconds(TIME_WAIT);
+            if (monState == MonState.DIE) yield break;
             float distance = Vector3.Distance(playerTr.position, monsterTr.position);
             if (distance <= attackDist)
             {
@@ -82,9 +100,24 @@ public class MonsterCtrl : MonoBehaviour
                     anim.SetBool(hashAttack, true);
                     break;
                 case MonState.DIE:
+                    isDie = true;
+                    agent.isStopped = true;
+                    anim.SetTrigger(hashDie);
+                    DisableCollider();                    
                     break;
             }
             yield return new WaitForSeconds(TIME_WAIT);
+        }
+    }
+
+    void DisableCollider()
+    {
+        bodyCollider.enabled = false;
+
+        // GameObject[] punches = GameObject.FindGameObjectsWithTag("PUNCH");
+        foreach (var item in handColliders)
+        {
+            item.enabled = false;
         }
     }
 
@@ -99,6 +132,11 @@ public class MonsterCtrl : MonoBehaviour
             Quaternion rot = Quaternion.LookRotation(-collision.GetContact(0).normal);
 
             ShowBloodEffect(pos, rot);
+            hp -= DAMAGE;
+            if (hp <= 0)
+            {
+                monState = MonState.DIE;
+            }
         }
     }
 
@@ -132,7 +170,10 @@ public class MonsterCtrl : MonoBehaviour
     {
         StopAllCoroutines();
         agent.isStopped = true;
-        anim.SetFloat(hashAnimSpeed, Random.Range(0.8f, 1.2f));
-        anim.SetTrigger(hashPlayerDie);
+        if (monState != MonState.DIE)
+        {
+            anim.SetFloat(hashAnimSpeed, Random.Range(0.8f, 1.2f));
+            anim.SetTrigger(hashPlayerDie);
+        }
     }
 }

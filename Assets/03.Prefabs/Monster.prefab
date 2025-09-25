@@ -347,6 +347,10 @@ MonoBehaviour:
   traceDist: 10
   attackDist: 2
   isDie: 0
+  bodyCollider: {fileID: 4921277129090878104}
+  handColliders:
+  - {fileID: 24941774}
+  - {fileID: 24941700}
 --- !u!1 &4921277129497709384
 GameObject:
   m_ObjectHideFlags: 0
