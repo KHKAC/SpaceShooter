@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerCtrl : MonoBehaviour
 {
@@ -11,6 +13,7 @@ public class PlayerCtrl : MonoBehaviour
     // component cash
     Transform tr;
     Animation anim;
+    Image hpBar;
     [SerializeField] float moveSpeed = 10.0f;
     [SerializeField] float turnSpeed = 500.0f;
 
@@ -21,6 +24,13 @@ public class PlayerCtrl : MonoBehaviour
 
     IEnumerator Start()
     {
+        // HP 바 연결
+        // GameObject go = GameObject.FindGameObjectWithTag("HP_BAR");
+        // if(go != null)
+        // {
+        //     hpBar = go.GetComponent<Image>();
+        // }
+        hpBar = GameObject.FindGameObjectWithTag("HP_BAR")?.GetComponent<Image>();
         currHP = INIT_HP;
         // GetComponent
         // tr = this.gameObject.GetComponent<Transform>();
@@ -79,6 +89,7 @@ public class PlayerCtrl : MonoBehaviour
         if (currHP > 0.0f && other.CompareTag("PUNCH"))
         {
             currHP -= PUNCH_POWER;
+            DisplayHealth();
             Debug.Log($"Player HP = {currHP / INIT_HP * 100}%");
             if (currHP <= 0.0f)
             {
@@ -98,5 +109,10 @@ public class PlayerCtrl : MonoBehaviour
         // }
 
         OnPlayerDie();
+    }
+
+    void DisplayHealth()
+    {
+        hpBar.fillAmount = currHP / INIT_HP;
     }
 }
