@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     public List<Transform> points = new List<Transform>();
     public GameObject monster;
     public float createTime = 3.0f;
+    // isGameOver를 Property로 만들기
     bool isGameOver;
     public bool IsGameOver
     {
@@ -49,7 +50,7 @@ public class GameManager : MonoBehaviour
 
     void CreateMonster()
     {
-        int idx = Random.Range(1, points.Count);
+        int idx = Random.Range(0, points.Count);
         Instantiate(monster, points[idx].position, points[idx].rotation);
     }
 }

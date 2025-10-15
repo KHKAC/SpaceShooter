@@ -107,8 +107,9 @@ public class PlayerCtrl : MonoBehaviour
         // {
         //     monster.SendMessage("OnPlayerDie", SendMessageOptions.DontRequireReceiver);
         // }
-
         OnPlayerDie();
+        //GameManager에 있는 IsGameOver 변경
+        GameObject.Find("GameManager").GetComponent<GameManager>().IsGameOver = true;
     }
 
     void DisplayHealth()
