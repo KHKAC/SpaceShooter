@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    
     // 몬스터 출현 위치 배열
     // public Transform[] points;
     public List<Transform> points = new List<Transform>();
@@ -18,11 +20,26 @@ public class GameManager : MonoBehaviour
         set
         {
             isGameOver = value;
-            if(isGameOver)
+            if (isGameOver)
             {
                 CancelInvoke("CreateMonster");
             }
         }
+    }
+
+    // 싱글톤 형태로 만드는 것
+    public static GameManager Instance = null;
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        DontDestroyOnLoad(gameObject);
     }
     void Start()
     {
