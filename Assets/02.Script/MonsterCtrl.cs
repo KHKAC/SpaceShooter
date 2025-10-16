@@ -35,6 +35,10 @@ public class MonsterCtrl : MonoBehaviour
     void OnEnable() // 스크립트가 활성화 될 때
     {
         PlayerCtrl.OnPlayerDie += OnPlayerDie;
+        // 몬스터의 상태를 체크하는 코루틴
+        StartCoroutine(CheckMonState());
+        // 상태에 따른 몬스터의 행동을 수행하는 코루틴
+        StartCoroutine(MonsterAction());
     }
 
     void OnDisable() // 스크립트가 비활성화 될 때
@@ -42,7 +46,7 @@ public class MonsterCtrl : MonoBehaviour
         PlayerCtrl.OnPlayerDie -= OnPlayerDie;
     }
 
-    void Start()
+    void Awake()
     {
         monsterTr = GetComponent<Transform>();
         playerTr = GameObject.FindWithTag("PLAYER").GetComponent<Transform>();
@@ -50,12 +54,7 @@ public class MonsterCtrl : MonoBehaviour
         anim = GetComponent<Animator>();
         // agent.destination = playerTr.position;
         // agent.SetDestination(playerTr.position);
-
         bloodEffect = Resources.Load<GameObject>("BloodSprayEffect");
-        // 몬스터의 상태를 체크하는 코루틴
-        StartCoroutine(CheckMonState());
-        // 상태에 따른 몬스터의 행동을 수행하는 코루틴
-        StartCoroutine(MonsterAction());
     }
 
     IEnumerator CheckMonState()
@@ -103,21 +102,32 @@ public class MonsterCtrl : MonoBehaviour
                     isDie = true;
                     agent.isStopped = true;
                     anim.SetTrigger(hashDie);
-                    DisableCollider();                    
+                    EnableDisableCollider(false);
+
+                    // 일정 시간 대기 후 오브젝트 풀링으로 환원
+                    yield return new WaitForSeconds(2.0f);
+
+                    // 사망 후 다시 재사용을 위해 hp 값 초기화;
+                    hp = MAX_HP;
+                    isDie = false;
+                    EnableDisableCollider(true);
+                    monState = MonState.IDLE;
+                    // 몬스터 비활성화
+                    this.gameObject.SetActive(false);
                     break;
             }
             yield return new WaitForSeconds(TIME_WAIT);
         }
     }
 
-    void DisableCollider()
+    void EnableDisableCollider(bool value)
     {
-        bodyCollider.enabled = false;
+        bodyCollider.enabled = value;
 
         // GameObject[] punches = GameObject.FindGameObjectsWithTag("PUNCH");
         foreach (var item in handColliders)
         {
-            item.enabled = false;
+            item.enabled = value;
         }
     }
 
