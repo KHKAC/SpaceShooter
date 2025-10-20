@@ -37,6 +37,7 @@ public class FireCtrl : MonoBehaviour
     void Update()
     {
         if (isPlayerDie) return;
+        int mb = LayerMask.NameToLayer("MONSTER_BODY");
         //Ray를 시각적으로 표시하기
         Debug.DrawRay(firePos.position, firePos.forward * 10.0f, Color.green);
         if (Input.GetMouseButtonDown(0))
@@ -53,7 +54,7 @@ public class FireCtrl : MonoBehaviour
             int mask = 1 << LayerMask.NameToLayer("Player");
             mask = ~mask;
             */
-            if (Physics.Raycast(firePos.position, firePos.forward, out hit, 10.0f, 1 << 6))
+            if (Physics.Raycast(firePos.position, firePos.forward, out hit, 10.0f, 1 << mb))
             {
                 Debug.Log($"HIT = {hit.transform.name}");
                 hit.transform.GetComponent<MonsterCtrl>()?.OnDamage(hit.point, hit.normal);
