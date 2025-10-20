@@ -48,13 +48,17 @@ public class FireCtrl : MonoBehaviour
             firePos.forward : 광선의 발사 방향
             out hit : 결과
             10.0f : 광선의 범위
-            1 << 6 : 레이어 감지 범위
+            1 << 6 : 레이어 감지 범위 // [1 << 6]은 [1 << LayerMask.NameToLayer("MONSTER_BODY")]와 같은 말
+            // 특정 Layer만 삭제하는 법
+            int mask = 1 << LayerMask.NameToLayer("Player");
+            mask = ~mask;
             */
             if (Physics.Raycast(firePos.position, firePos.forward, out hit, 10.0f, 1 << 6))
             {
                 Debug.Log($"HIT = {hit.transform.name}");
                 hit.transform.GetComponent<MonsterCtrl>()?.OnDamage(hit.point, hit.normal);
             }
+            
         }
     }
 
