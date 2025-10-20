@@ -14,6 +14,8 @@ public class FireCtrl : MonoBehaviour
     AudioSource fireAudio;
     MeshRenderer muzzleFlash;
     bool isPlayerDie = false;
+    //Raycast
+    RaycastHit hit;
 
     void OnEnable()
     {
@@ -35,15 +37,30 @@ public class FireCtrl : MonoBehaviour
     void Update()
     {
         if (isPlayerDie) return;
+        //Ray를 시각적으로 표시하기
+        Debug.DrawRay(firePos.position, firePos.forward * 10.0f, Color.green);
         if (Input.GetMouseButtonDown(0))
         {
             Fire();
+            //Ray를 발사
+            /*
+            firePos.position : 광선의 발사 위치
+            firePos.forward : 광선의 발사 방향
+            out hit : 결과
+            10.0f : 광선의 범위
+            1 << 6 : 레이어 감지 범위
+            */
+            if (Physics.Raycast(firePos.position, firePos.forward, out hit, 10.0f, 1 << 6))
+            {
+                Debug.Log($"HIT = {hit.transform.name}");
+                hit.transform.GetComponent<MonsterCtrl>()?.OnDamage(hit.point, hit.normal);
+            }
         }
     }
 
     void Fire()
     {
-        Instantiate(bullet, firePos.position, firePos.rotation, bulletCreateTr);
+        Instantiate(bullet, firePos.position, firePos.rotation);
         fireAudio.PlayOneShot(fireSfx, 1.0f);
         StartCoroutine(ShowMuzzleFlash());
     }

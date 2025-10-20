@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using JetBrains.Annotations;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -33,6 +34,8 @@ public class GameManager : MonoBehaviour
 
     // 싱글톤 형태로 만드는 것
     public static GameManager Instance = null;
+    public TMP_Text scoreTxt;
+    int totScore = 0;
     void Awake()
     {
         if (Instance == null)
@@ -98,7 +101,7 @@ public class GameManager : MonoBehaviour
             monsterPool.Add(_monster);
         }
     }
-    
+
     // 오브젝트 풀에서 사용가능한 몬스터를 추출해 반환하는 함수
     public GameObject GetMonsterInPool()
     {
@@ -110,5 +113,11 @@ public class GameManager : MonoBehaviour
             }
         }
         return null;
+    }
+    
+    public void DisPlayScore(int score)
+    {
+        totScore += score;
+        scoreTxt.text = $"<color=#00ff00>SCORE :</color> <color=#ff0000>{totScore:#,##0}</color>";
     }
 }

@@ -6,8 +6,9 @@ using UnityEngine.AI;
 public class MonsterCtrl : MonoBehaviour
 {
     const float TIME_WAIT = 0.3f;
-    const int MAX_HP = 100;
+    const int MAX_HP = 50;
     const int DAMAGE = 10;
+    const int SCORE = 150;
     
     public enum MonState { IDLE, TRACE, ATTACK, DIE }
     public MonState monState = MonState.IDLE;
@@ -136,17 +137,19 @@ public class MonsterCtrl : MonoBehaviour
         if (collision.collider.CompareTag("BULLET"))
         {
             Destroy(collision.gameObject);
-            anim.SetTrigger(hashHit);
+        }
+    }
 
-            Vector3 pos = collision.GetContact(0).point;
-            Quaternion rot = Quaternion.LookRotation(-collision.GetContact(0).normal);
-
-            ShowBloodEffect(pos, rot);
-            hp -= DAMAGE;
-            if (hp <= 0)
-            {
-                monState = MonState.DIE;
-            }
+    public void OnDamage(Vector3 pos, Vector3 normal)
+    {
+        anim.SetTrigger(hashHit);
+        Quaternion rot = Quaternion.LookRotation(normal);
+        ShowBloodEffect(pos, rot);
+        hp -= DAMAGE;
+        if (hp <= 0)
+        {
+            monState = MonState.DIE;
+            GameManager.Instance.DisPlayScore(SCORE);
         }
     }
 
